@@ -1,41 +1,45 @@
-# Pygame шаблон - скелет для нового проекта Pygame
 import pygame
-import random
 
-WIDTH = 360
-HEIGHT = 480
-FPS = 30
 
-# Задаем цвета
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+def main():
+    pygame.init()
+    size = (800, 600)
+    red = (255, 0, 0)
+    black = (250, 250, 250)
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("MyGame")
+    image_icon = pygame.image.load("icon.png")
 
-# Создаем игру и окно
-pygame.init()
-pygame.mixer.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("My Game")
-clock = pygame.time.Clock()
 
-# Цикл игры
-running = True
-while running:
-    # Держим цикл на правильной скорости
-    clock.tick(FPS)
-    # Ввод процесса (события)
-    for event in pygame.event.get():
-        # check for closing window
-        if event.type == pygame.QUIT:
-            running = False
+    font = pygame.font.SysFont('Comic Sans MS', 16)
 
-    # Обновление
+    text = font.render("Добро пожаловать в игру MyGame! ", True, red, black)
+    width, heigth = text.get_size()
+    x, y = 0, 0
+    direct_x, direct_y = 1, 1
 
-    # Рендеринг
-    screen.fill(BLACK)
-    # После отрисовки всего, переворачиваем экран
-    pygame.display.flip()
+    fps = 60
+    clock = pygame.time.Clock()
 
-pygame.quit()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+        clock.tick(fps)
+        screen.fill(black)
+        image = image_icon.get_rect()
+        screen.blit(image_icon, image)
+        screen.blit(text, (x, y))
+        x += direct_x
+        y += direct_y
+        if x + width >= 800 or x <= 0:
+            direct_x = - direct_x
+        if y + heigth >= 600 or y <= 0:
+            direct_y = - direct_y
+        pygame.display.update()
+        image = image_icon.get_rect()
+        screen.blit(image_icon, image)
+
+
+if __name__ == "__main__":
+    main()
