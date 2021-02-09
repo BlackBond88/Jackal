@@ -5,40 +5,35 @@ SCREEN_WIDTH, SCREEN_HEIGTH = 800, 600
 FPS = 60
 
 
-class Tower():
-    def __init__(self, x, y, width, heigth):
+class GameObject:
+    def __init__(self, x, y, width, heigth, color):
         self.x = x
         self.y = y
         self.width = width
         self.heigth = heigth
+        self.color = color
+        self.center_x = self.x + self.width / 2
+        self.center_y = self.x + self.width / 2
 
     def draw(self):
-        pygame.draw.rect(screen, WHITE, (self.x, self.y, self.width, self.heigth))
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.heigth))
 
 
-class Target():
-    def __init__(self, x, y, width, heigth):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.heigth = heigth
-
-    def move(self):
-        self.x += 1/5
-        self.y += 1/5
-
-    def draw(self):
-        pygame.draw.rect(screen, RED, (self.x, self.y, self.width, self.heigth))
+class Tower(GameObject):
+    pass
 
 
-#class GameObject:
-
+class Target(GameObject):
+    def move(self, tower_x, tower_y):
+        k = (self.y - tower_y) / (self.x - tower_x)
+        b = tower_x - k * tower_y
+        self.x += 1
+        self.y = k * self.x + b
 
 
 def game_main():
-    #global my_tower
-    zombie = Target(10, 10, 10, 10)
-    my_tower = Tower(350, 50, 50, 50)
+    zombie = Target(10, 10, 10, 10, RED)
+    my_tower = Tower(350, 350, 50, 50, WHITE)
 
     finished = False
     clock = pygame.time.Clock()
@@ -52,9 +47,9 @@ def game_main():
         pygame.display.update()
         screen.fill(BLACK)
 
-        zombie.move()
-        zombie.draw()
         my_tower.draw()
+        zombie.move(my_tower.center_x, my_tower.center_y)
+        zombie.draw()
 
     pygame.quit()
 
