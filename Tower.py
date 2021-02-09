@@ -1,29 +1,44 @@
 import pygame
 from my_colors import *
 
-
 SCREEN_WIDTH, SCREEN_HEIGTH = 800, 600
 FPS = 60
 
 
-class Target:
-    def __init__(self, x, y):
+class Tower():
+    def __init__(self, x, y, width, heigth):
         self.x = x
         self.y = y
-        self.width = 50
-        self.heigth = 50
-
-    def move(self):
-        self.x += 1
-        self.y += 1
+        self.width = width
+        self.heigth = heigth
 
     def draw(self):
-        pygame.draw.rect(screen, (RED), (self.x, self.y, self.width, self.heigth))
+        pygame.draw.rect(screen, WHITE, (self.x, self.y, self.width, self.heigth))
+
+
+class Target():
+    def __init__(self, x, y, width, heigth):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.heigth = heigth
+
+    def move(self):
+        self.x += 1/5
+        self.y += 1/5
+
+    def draw(self):
+        pygame.draw.rect(screen, RED, (self.x, self.y, self.width, self.heigth))
+
+
+#class GameObject:
+
 
 
 def game_main():
-
-    zombie = Target(10, 10)
+    #global my_tower
+    zombie = Target(10, 10, 10, 10)
+    my_tower = Tower(350, 50, 50, 50)
 
     finished = False
     clock = pygame.time.Clock()
@@ -39,8 +54,10 @@ def game_main():
 
         zombie.move()
         zombie.draw()
+        my_tower.draw()
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     pygame.init()
