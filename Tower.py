@@ -33,24 +33,27 @@ class Tower(GameObject):
 
 class Target(GameObject):
     def move(self, tower_x, tower_y):
-        k = (tower_x ** 2 + tower_y ** 2) ** (1/2)
-        print(k)
-        x = tower_x / k 
-        y = tower_y / k
+        if tower_y - self.y != 0:
+            tg = (tower_x - self.x) / (tower_y - self.y)
+            cos = 1 / (1 + tg ** 2) ** (1 / 2)
+            sin = tg / (1 + tg ** 2) ** (1 / 2)
+            x = sin
+            y = cos
+        else:
+            y = 0
+            if tower_x - self.x > 0:
+                x = 1
+            else:
+                x = -1
         if abs(tower_x - self.x) < 20 and abs(tower_y - self.y) < 20:
             self.health = 0
-        elif tower_x - self.x > 0 and tower_y - self.y > 0:
+        elif tower_y - self.y >= 0:
             self.x += x
             self.y += y
-        elif tower_x - self.x > 0 and tower_y - self.y < 0:
-            self.x += x
-            self.y -= y
-        elif tower_x - self.x < 0 and tower_y - self.y > 0:
-            self.x -= x
-            self.y += y
-        elif tower_x - self.x < 0 and tower_y - self.y < 0:
+        elif tower_y - self.y < 0:
             self.x -= x
             self.y -= y
+
 
 
 def generate_random_target(width, heigth, color, quantity):
@@ -64,8 +67,8 @@ def generate_random_target(width, heigth, color, quantity):
 
 
 def game_main():
-    zombies = generate_random_target(10, 10, RED, 100)
-    my_tower = Tower(550, 350, 50, 50, 1000, WHITE)
+    zombies = generate_random_target(10, 10, RED, 10)
+    my_tower = Tower(350, 250, 50, 50, 1000, WHITE)
 
     finished = False
     clock = pygame.time.Clock()
