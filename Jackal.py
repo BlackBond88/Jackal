@@ -1,5 +1,6 @@
 import pygame
 from my_colors import *     # файл названия цвета
+from my_picture import *
 
 SCREEN_WIDTH, SCREEN_HEIGTH = 1200, 800
 FPS = 60
@@ -11,7 +12,9 @@ class Cells:
 
     def create(self):
         """ Создает клетку поля """
-        print(self.name)
+        picture_list = picture_load()
+
+
 
 
 def game_main():
@@ -28,7 +31,7 @@ def game_main():
                 finished = True
 
         pygame.display.update()     # обновление экрана
-        screen.fill(BLACK)          # закрашивает экран черным
+        screen.fill(WHITE)          # закрашивает экран черным
 
     pygame.quit()                   # выход из игры
 
