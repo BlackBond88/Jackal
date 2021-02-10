@@ -18,7 +18,9 @@ class GameObject:
         self.center_y = self.y + self.heigth / 2
 
     def draw(self):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.heigth))
+        self.color = BLACK
+        rect = pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.heigth))
+        screen.blit(picture, rect)
 
     def is_alive(self):
         if self.health > 0:
@@ -28,8 +30,11 @@ class GameObject:
 
 
 class Tower(GameObject):
-    pass
-
+    def move(self, x, y):
+        self.x += x
+        self.y += y
+        self.center_x = self.x + self.width / 2
+        self.center_y = self.y + self.heigth / 2
 
 class Target(GameObject):
     def move(self, tower_x, tower_y):
@@ -67,22 +72,35 @@ def generate_random_target(width, heigth, color, quantity):
 
 
 def game_main():
-    zombies = generate_random_target(10, 10, RED, 10)
+    zombies = generate_random_target(10, 10, RED, 1000)
     my_tower = Tower(350, 250, 50, 50, 1000, WHITE)
 
     finished = False
     clock = pygame.time.Clock()
 
+
     while not finished:
         clock.tick(FPS)
+
+        my_tower.draw()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 finished = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    my_tower.move(-25, 0)
+                if event.key == pygame.K_RIGHT:
+                    my_tower.move(25, 0)
+                if event.key == pygame.K_DOWN:
+                    my_tower.move(0, 25)
+                if event.key == pygame.K_UP:
+                    my_tower.move(0, -25)
 
         pygame.display.update()
         screen.fill(BLACK)
 
-        my_tower.draw()
+
         for zombie in zombies:
             zombie.move(my_tower.center_x, my_tower.center_y)
             zombie.draw()
@@ -96,6 +114,10 @@ def game_main():
 if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGTH))
+    picture = pygame.image.load("zom.gif")
+    picture = pygame.transform.scale(picture, (20, 20))
+
+
     pygame.display.set_caption("MyGame")
     pygame.display.update()
 
