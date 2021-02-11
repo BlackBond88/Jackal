@@ -15,7 +15,8 @@ class Cells:
         self.i = i
         image_name = 'Image/' + self.name + '.png'
         image_cell = pygame.image.load(image_name)
-        rect_cell = pygame.draw.rect(screen, BLACK, (100+self.i*100, 100, 100, 100))
+        x = 65 * self.i + 5
+        rect_cell = pygame.draw.rect(screen, BLACK, (x, x, 65, 65))
         screen.blit(image_cell, rect_cell)
 
 #rect = pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.heigth))
@@ -24,11 +25,11 @@ def picture_create():
     """ Создает клетку поля """
     picture_list = picture_load()   #
     cells = []
-    i = 1
+    counter = 1
     for image in picture_list:      # создает клетки на поле
         cell = Cells(image)
-        cell.cell_draw(i)
-        i += 1
+        cell.cell_draw(counter)
+        counter += 1
         cells.append(cell)
 
     return cells
