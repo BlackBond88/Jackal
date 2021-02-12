@@ -1,4 +1,4 @@
-def picture_load():
+def picture_name():
     picture_list = ['empty1'] * 10 + \
                   ['empty2'] * 10 + \
                   ['empty3'] * 10 + \
@@ -29,5 +29,6 @@ def picture_load():
                   ['plane'] * 1 + \
                   ['balloon'] * 2 + \
                   ['cannon'] * 2 + \
-                  ['rum'] * 4
+                  ['rum'] * 4 + \
+                  ['sea'] * 52
     return picture_list
