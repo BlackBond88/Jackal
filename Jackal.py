@@ -50,10 +50,12 @@ def game_main():
                 finished = True
             if event.type == pygame.MOUSEBUTTONDOWN:    # нажатие ЛКМ
                 if event.button == 1:
-                    print("22")
+                    print(pygame.mouse.get_pos())
+                    screen.moving_right = True
+
 
         pygame.display.update()     # обновление экрана
-        #screen.fill(WHITE)          # закрашивает экран
+        # screen.fill(WHITE)          # закрашивает экран
 
     pygame.quit()                   # выход из игры
 
