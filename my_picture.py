@@ -29,6 +29,5 @@ def picture_name():
                   ['plane'] * 1 + \
                   ['balloon'] * 2 + \
                   ['cannon'] * 2 + \
-                  ['rum'] * 4 + \
-                  ['sea'] * 52
+                  ['rum'] * 4
     return picture_list
