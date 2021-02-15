@@ -15,21 +15,29 @@ class Cells:
         """ рисует клетки """
         if self.name == 'sea':
             image_name = 'Image/' + self.name + '.png'
-        image_cell = pygame.image.load(image_name)
+        self.image_cell = pygame.image.load(image_name)
         self.x = 70 * (i % 13) + 5
         self.y = 70 * (i // 13) + 5
         self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
-        screen.blit(image_cell, self.rect_cell)
+        screen.blit(self.image_cell, self.rect_cell)
 
     def click(self):
         """ событие при нажатии мышкой """
+        self.cell_animation(self.image_cell, 65, 1, -1)
+
         image_name = 'Image/' + self.name + '.png'
         image_cell = pygame.image.load(image_name)
-        new = pygame.transform.scale(image_cell, (75, 75))
-        self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 0, 0))
-        screen.blit(new, self.rect_cell)
-        pygame.display.update()
 
+        self.cell_animation(image_cell, 0, 66, 1)
+
+    def cell_animation(self, image, a, b, c):
+        clock = pygame.time.Clock()
+        for i in range(a, b, c):
+            clock.tick(300)
+            new = pygame.transform.scale(image, (i, 65))
+            self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
+            screen.blit(new, self.rect_cell)
+            pygame.display.update()
 
 def picture_create():
     """ Создает клетку поля """
