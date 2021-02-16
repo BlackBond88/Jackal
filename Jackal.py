@@ -4,40 +4,36 @@ from my_colors import *     # файл названия цвета
 from my_picture import *
 
 SCREEN_WIDTH, SCREEN_HEIGTH = 915, 915
+IMAGE_BACKGROUND = pygame.image.load('Image/0.png')
 FPS = 60
 
 
 class Cells:
-    def __init__(self, name):
+    def __init__(self, name, image_cell, i):
         self.name = name
-
-    def cell_draw(self, i , image_name='Image/0.png'):
-        """ рисует клетки """
-        if self.name == 'sea':
-            image_name = 'Image/' + self.name + '.png'
-        self.image_cell = pygame.image.load(image_name)
+        self.image_cell = image_cell
         self.x = 70 * (i % 13) + 5
         self.y = 70 * (i // 13) + 5
         self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
-        screen.blit(self.image_cell, self.rect_cell)
+        if self.name != 'sea':
+            screen.blit(IMAGE_BACKGROUND, self.rect_cell)
+        else:
+            screen.blit(self.image_cell, self.rect_cell)
 
     def click(self):
         """ событие при нажатии мышкой """
-        self.cell_animation(self.image_cell, 65, 1, -1)
-
-        image_name = 'Image/' + self.name + '.png'
-        image_cell = pygame.image.load(image_name)
-
-        self.cell_animation(image_cell, 0, 66, 1)
+        self.cell_animation(IMAGE_BACKGROUND, 65, 1, -1)
+        self.cell_animation(self.image_cell, 0, 66, 1)
 
     def cell_animation(self, image, a, b, c):
         clock = pygame.time.Clock()
         for i in range(a, b, c):
-            clock.tick(300)
-            new = pygame.transform.scale(image, (i, 65))
+            clock.tick(250)
+            new_picture = pygame.transform.scale(image, (i, 65))
             self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
-            screen.blit(new, self.rect_cell)
+            screen.blit(new_picture, self.rect_cell)
             pygame.display.update()
+
 
 def picture_create():
     """ Создает клетку поля """
@@ -54,8 +50,15 @@ def picture_create():
         else:
             picture_list_all[i] = 'sea'
 
-    for image in picture_list_all:      # делаем каждую клетку экземляром класса
-        cell = Cells(image)
+    # загружает все картинки
+    image_cells = []
+    for name in picture_list_all:
+        image_name = 'Image/' + name + '.png'
+        image_cells.append(pygame.image.load(image_name))
+
+    # делает каждую клетку экземляром класса
+    for i in range(len(picture_list_all)):
+        cell = Cells(picture_list_all[i], image_cells[i], i)
         cells.append(cell)
 
     return cells
@@ -67,9 +70,7 @@ def game_main():
     finished = False
     clock = pygame.time.Clock()     # скорость анимаций
 
-    cells = picture_create()
-    for i in range(len(cells)):
-        cells[i].cell_draw(i)
+    cells = picture_create()        # создает клетки
 
     while not finished:             # запуск игры (цикл)
         clock.tick(FPS)
