@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="252c8f25-ba5f-4a05-9c6c-dfff418a2d4d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Image/1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Image/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Image/pirate_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Image/pirate_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Image/pirate_3.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Image/Pirat1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Image/Pirat2.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Jackal.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jackal.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

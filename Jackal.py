@@ -14,28 +14,34 @@ class Cells:
     def __init__(self, name, image_cell, i):
         self.name = name
         self.image_cell = image_cell
+        self.i = i
         self.x = 70 * (i % 13) + 5
         self.y = 70 * (i // 13) + 5
-        self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
-
         if self.name != 'sea':
-            screen.blit(IMAGE_BACKGROUND, self.rect_cell)
+            screen.blit(IMAGE_BACKGROUND, (self.x, self.y))
         else:
-            screen.blit(self.image_cell, self.rect_cell)
+            screen.blit(self.image_cell, (self.x, self.y))
 
     def click(self):
         """ событие при нажатии мышкой """
         self.cell_animation(IMAGE_BACKGROUND, 65, 1, -1)
         self.cell_animation(self.image_cell, 0, 66, 1)
+        self.cell_label()
 
     def cell_animation(self, image, a, b, c):
         clock = pygame.time.Clock()
         for i in range(a, b, c):
             clock.tick(250)
             new_picture = pygame.transform.scale(image, (i, 65))
-            self.rect_cell = pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
-            screen.blit(new_picture, self.rect_cell)
+            pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
+            screen.blit(new_picture, (self.x, self.y))
             pygame.display.update()
+
+    def cell_label(self):
+        """ Выделяет клетки которые можно нажать """
+        # for i in cell:
+
+        # pygame.draw.rect(screen, GREEN, (x - 2, y - 2, 68, 68), 2)
 
 
 class Pirate:
@@ -101,7 +107,7 @@ def game_main():
     clock = pygame.time.Clock()     # скорость анимаций
 
     cells = picture_create()        # создает клетки
-    pirates = pirate_create(PLAYERS_NUMBER)       # создает пиратов
+    pirate_create(PLAYERS_NUMBER)       # создает пиратов
 
     while not finished:             # запуск игры (цикл)
         clock.tick(FPS)
