@@ -18,17 +18,14 @@ class GameObject:
 
     def pirate_choice(self, x, y, i_cell):
         for i in range(3):
-            pygame.draw.rect(screen, WHITE, (self.pirates[i].x, self.pirates[i].y, 18, 30), 2)
-        for i in range(3):
             p_x = self.pirates[i].x
             p_y = self.pirates[i].y
             if ((p_x + 20) > x > p_x) and ((p_y + 34) > y > p_y):
                 self.cells[i_cell + 13].marker = True
-                pygame.draw.rect(screen, RED, (p_x, p_y, 18, 30), 2)
                 c_x = self.cells[i_cell + 13].x
                 c_y = self.cells[i_cell + 13].y
                 pygame.draw.rect(screen, GREEN, (c_x - 2, c_y - 2, 68, 68), 2)
-                return i
+                return i+1
         return False
 
     def cell_marker(self):
@@ -40,32 +37,39 @@ class GameObject:
 
 
 class Cells:
-    def __init__(self, name, image_cell, i, marker=False):
+    def __init__(self, name, image_cell, i, state=False, marker=False):
         self.name = name
         self.image_cell = image_cell
         self.i = i
         self.x = 70 * (i % 13) + 5
         self.y = 70 * (i // 13) + 5
+        self.state = state
         self.marker = marker
-        if self.name != 'sea':
-            screen.blit(IMAGE_BACKGROUND, (self.x, self.y))
-        else:
-            screen.blit(self.image_cell, (self.x, self.y))
 
     def click(self):
         """ событие при нажатии мышкой """
         if self.marker:
             self.animation(IMAGE_BACKGROUND, 65, 1, -1)
             self.animation(self.image_cell, 0, 66, 1)
+            self.state = True
 
     def animation(self, image, a, b, c):
         clock = pygame.time.Clock()
         for i in range(a, b, c):
-            clock.tick(350)
+            clock.tick(300)
             new_picture = pygame.transform.scale(image, (i, 65))
             pygame.draw.rect(screen, BLACK, (self.x, self.y, 65, 65))
             screen.blit(new_picture, (self.x, self.y))
             pygame.display.update()
+
+    def draw(self):
+        if self.name != 'sea':
+            if not self.state:
+                screen.blit(IMAGE_BACKGROUND, (self.x, self.y))
+            else:
+                screen.blit(self.image_cell, (self.x, self.y))
+        else:
+            screen.blit(self.image_cell, (self.x, self.y))
 
 
 class Pirate:
@@ -73,14 +77,18 @@ class Pirate:
         self.image_pirate = image_pirate
         self.x = 70 * 6 + 8 + i * 21
         self.y = 7
-
-        self.rect_pirate = pygame.draw.rect(screen, WHITE, (self.x, self.y, 18, 30), 2)
-        screen.blit(self.image_pirate, self.rect_pirate)
+        self.i = i
 
     def animation(self, i_cell):
+        self.y += 1
         i_pirate = ((self.y - 5) // 70) * 13 + (self.x - 5) // 70
-        if i_pirate == i_cell:
-            return
+
+    def draw(self, i):
+        if self.i == i:
+            pygame.draw.rect(screen, RED, (self.x, self.y, 18, 30), 2)
+        else:
+            pygame.draw.rect(screen, WHITE, (self.x, self.y, 18, 30), 2)
+        screen.blit(self.image_pirate, (self.x, self.y))
 
         '''clock = pygame.time.Clock()
         for i in range(75):
@@ -145,9 +153,15 @@ def game_main():
     clock = pygame.time.Clock()  # скорость анимаций
 
     game = GameObject('Jackal')
+    pirate_choice = False
 
     while not finished:  # запуск игры (цикл)
         clock.tick(FPS)
+
+        for cell in game.cells:
+            cell.draw()
+        for pirate in game.pirates:
+            pirate.draw(pirate_choice-1)
 
         for event in pygame.event.get():  # события в игре
             if event.type == pygame.QUIT:  # выход из игры
@@ -157,13 +171,14 @@ def game_main():
                     x_mouse, y_mouse = pygame.mouse.get_pos()
                     i_cell = ((y_mouse - 5) // 70) * 13 + (x_mouse - 5) // 70  # номер клетки
                     pirate_choice = game.pirate_choice(x_mouse, y_mouse, i_cell)
+                    print(pirate_choice)
                     if not pirate_choice:
-                        game.pirates[pirate_choice].animation(i_cell)
+                        game.pirates[pirate_choice-1].animation(i_cell)
                         game.cells[i_cell].click()
                         game.cell_marker()
 
         pygame.display.update()  # обновление экрана
-        # screen.fill(BLACK)          # закрашивает экран
+        screen.fill(BLACK)          # закрашивает экран
 
     pygame.quit()  # выход из игры
 
