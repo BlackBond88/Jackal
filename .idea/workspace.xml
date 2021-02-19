@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="252c8f25-ba5f-4a05-9c6c-dfff418a2d4d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/cross-zeroes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Jackal.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jackal.py" afterDir="false" />
     </list>
@@ -42,7 +43,7 @@
       <recent name="C:\Users\Artem\Desktop\Python\Jackal" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Jackal">
+  <component name="RunManager" selected="Python.cross-zeroes">
     <configuration name="Jackal" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Jackal" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -106,7 +107,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="cannon" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="cross-zeroes" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Jackal" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -118,7 +119,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cannon.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cross-zeroes.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -171,11 +172,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.cross-zeroes" />
         <item itemvalue="Python.Jackal" />
         <item itemvalue="Python.my_picture" />
         <item itemvalue="Python.Jackal_test" />
         <item itemvalue="Python.Tower" />
-        <item itemvalue="Python.cannon" />
       </list>
     </recent_temporary>
   </component>

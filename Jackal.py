@@ -18,6 +18,8 @@ class GameObject:
 
     def pirate_choice(self, x, y, i_cell):
         for i in range(3):
+            self.pirates[i].color = WHITE
+        for i in range(3):
             p_x = self.pirates[i].x
             p_y = self.pirates[i].y
             if ((p_x + 20) > x > p_x) and ((p_y + 34) > y > p_y):
@@ -25,6 +27,7 @@ class GameObject:
                 c_x = self.cells[i_cell + 13].x
                 c_y = self.cells[i_cell + 13].y
                 pygame.draw.rect(screen, GREEN, (c_x - 2, c_y - 2, 68, 68), 2)
+
                 return i+1
         return False
 
@@ -34,6 +37,12 @@ class GameObject:
             c_x = cell.x
             c_y = cell.y
             pygame.draw.rect(screen, BLACK, (c_x - 2, c_y - 2, 68, 68), 2)
+
+    def draw(self, i):
+        for cell in self.cells:
+            cell.draw()
+        for pirate in self.pirates:
+            pirate.draw(i)
 
 
 class Cells:
@@ -78,16 +87,16 @@ class Pirate:
         self.x = 70 * 6 + 8 + i * 21
         self.y = 7
         self.i = i
+        self.color = WHITE
 
     def animation(self, i_cell):
-        self.y += 1
+        self.y += 5
         i_pirate = ((self.y - 5) // 70) * 13 + (self.x - 5) // 70
 
     def draw(self, i):
         if self.i == i:
-            pygame.draw.rect(screen, RED, (self.x, self.y, 18, 30), 2)
-        else:
-            pygame.draw.rect(screen, WHITE, (self.x, self.y, 18, 30), 2)
+            self.color = RED
+        pygame.draw.rect(screen, self.color, (self.x, self.y, 18, 30), 2)
         screen.blit(self.image_pirate, (self.x, self.y))
 
         '''clock = pygame.time.Clock()
@@ -154,14 +163,12 @@ def game_main():
 
     game = GameObject('Jackal')
     pirate_choice = False
+    pirate_choice_now = 0
 
     while not finished:  # запуск игры (цикл)
         clock.tick(FPS)
 
-        for cell in game.cells:
-            cell.draw()
-        for pirate in game.pirates:
-            pirate.draw(pirate_choice-1)
+        game.draw(pirate_choice-1)
 
         for event in pygame.event.get():  # события в игре
             if event.type == pygame.QUIT:  # выход из игры
@@ -171,9 +178,14 @@ def game_main():
                     x_mouse, y_mouse = pygame.mouse.get_pos()
                     i_cell = ((y_mouse - 5) // 70) * 13 + (x_mouse - 5) // 70  # номер клетки
                     pirate_choice = game.pirate_choice(x_mouse, y_mouse, i_cell)
-                    print(pirate_choice)
-                    if not pirate_choice:
-                        game.pirates[pirate_choice-1].animation(i_cell)
+                    if pirate_choice:
+                        pirate_choice_now = pirate_choice - 1
+                    else:
+                        for i in range(14):
+                            pygame.display.update()  # обновление экрана
+                            screen.fill(BLACK)
+                            game.pirates[pirate_choice_now].animation(i_cell)
+                            game.draw(pirate_choice_now)
                         game.cells[i_cell].click()
                         game.cell_marker()
 
