@@ -29,17 +29,22 @@ class GameField:
 
 class GameFieldView:
     """
-    Виджет игрового поля, который отображает его на экране, а также выясняет мето клика
+    Виджет игрового поля, который отображает его на экране, а также выясняет место клика
     """
     def __init__(self, field):
         # загрузить картинки занчков клеток...
+        self._image_field = pygame.image.load('Image/field.png')
+        self._image_cross = pygame.image.load('Image/cross.png')
+        self._image_zero = pygame.image.load('Image/zero.png')
         # отобразить первичное состояние поля
         self.field = field
         self.height = field.height * CELL_SIZE
         self.width = field.width * CELL_SIZE
 
-    def draw(self):
-        pass
+    def draw(self, f):
+        for i in range(3):
+            for j in range(3):
+                f.blit(self._image_cross, (i * CELL_SIZE, j * CELL_SIZE))
 
     def check_coords_correct(self, x, y):
         return True     # TODO: self._heeght учесвть
@@ -96,8 +101,11 @@ class GameWindow:
                     if self._field_widget.check_coords_correct(x, y):
                         i, j = self._field_widget.get_coords(x, y)
                         self._game_manager.handle_click(i, j)
+
+            self._field_widget.draw(self._screen)
             pygame.display.flip()
             clock.tick(FPS)
+
 
 def main():
     window = GameWindow()
