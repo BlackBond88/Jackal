@@ -5,7 +5,7 @@ FPS = 60
 CELL_SIZE = 50
 
 
-class Cell(Enum):
+class Cell():
     VOID = 0
     CROSS = 1
     ZERO = 2
