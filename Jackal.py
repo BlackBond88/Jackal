@@ -6,7 +6,7 @@ from my_picture import *
 SCREEN_WIDTH = 915
 SCREEN_HEIGTH = 915
 CELL_SIZE = 70
-FIELD_SIZE  =13
+FIELD_SIZE = 13
 ICON = pygame.image.load('Image/icon.png')
 GAME_NAME = 'Jackal'
 FPS = 60
@@ -45,6 +45,18 @@ class Pirate:
     """
     Класс пиратов, содержит информацию о каждом пирте
     """
+    def __init__(self, number, player, image):
+        self.number = number
+        self.player = player
+        self.image = image
+
+        if self.player.color == RED:
+            if self.number != 2:
+                self.x = FIELD_SIZE // 2 * CELL_SIZE + 32 * self.number + 9
+                self.y = 8
+            else:
+                self.x = FIELD_SIZE // 2 * CELL_SIZE + 32 + 9
+                self.y = 32 + 8
 
 
 class Coin:
@@ -99,6 +111,17 @@ class GameField:
 
         return cells
 
+    def pirate_create(self, player):
+        image_name = 'Image/pirate.png'
+        image = pygame.image.load(image_name)
+        # создаем экземпляр каждого пирата
+        pirates = []
+        for i in range(3):
+            pirate = Pirate(i, player, image)
+            pirates.append(pirate)
+
+        return pirates
+
 
 class EventHandling:
     """
@@ -127,12 +150,13 @@ class GameRound:
     Класс, который отвечает за игровой раунд
     """
     def __init__(self, player1):
-        self._players = player1
+        self.players = player1
         self._current_player = 0
 
         # создает игровое поле
         self.field = GameField()
         self.cells = self.field.cells_create()
+        self.pirates = self.field.pirate_create(self.players)
 
 
 class GameWindow:
@@ -168,10 +192,12 @@ class GameWindow:
                         x_mouse, y_mouse = pygame.mouse.get_pos()
                         i_cell = self.event.cursor_position(x_mouse, y_mouse)
                         self.game_manager.cells[i_cell].click_cell()
-                        
+
             # Прорисовка
             for cell in self.game_manager.cells:
                 self._screen.blit(cell.image, (cell.x, cell.y))
+            for pirate in self.game_manager.pirates:
+                self._screen.blit(pirate.image, (pirate.x, pirate.y))
 
             pygame.display.flip()
             clock.tick(FPS)
