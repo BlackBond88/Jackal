@@ -5,6 +5,8 @@ from my_picture import *
 
 SCREEN_WIDTH = 915
 SCREEN_HEIGTH = 915
+CELL_SIZE = 70
+FIELD_SIZE  =13
 ICON = pygame.image.load('Image/icon.png')
 GAME_NAME = 'Jackal'
 FPS = 60
@@ -25,13 +27,18 @@ class Cell:
     """
     def __init__(self, name, image, image_back, i, j):
         self.name = name
-        self.image = image
-        self.image_back = image_back
+        self.image_cell = image
         self.i = i              # номер клетки
         self.j = j
-        self.x = 70 * i + 5     # координата клетки
-        self.y = 70 * j + 5
+        self.x = CELL_SIZE * i + 5     # координата клетки
+        self.y = CELL_SIZE * j + 5
 
+        self.image = self.image_cell
+        if self.name != 'sea':
+            self.image = image_back
+
+    def click_cell(self):
+        self.image = self.image_cell
 
 
 class Pirate:
@@ -58,8 +65,7 @@ class GameField:
     которые находятся на игровом моле
     """
     def __init__(self):
-        self.field_size = 13
-        self.imgage_back = pygame.image.load('Image/0.png')
+        self.image_back = pygame.image.load('Image/0.png')
 
     def cells_create(self):
         # считывает название картинок
@@ -68,7 +74,7 @@ class GameField:
         random.shuffle(picture_list_play)
 
         # заполняем двумерный моссив именами клеток вместе с "морем"
-        n = self.field_size
+        n = FIELD_SIZE
         # добавляем клетки по краям поля
         picture_list_play.insert(0, 'sea')
         picture_list_play.insert(n - 3, 'sea')
@@ -88,7 +94,7 @@ class GameField:
             for j in range(n):
                 image_name = 'Image/' + str(picture_list[i][j]) + '.png'
                 image = pygame.image.load(image_name)
-                cell = Cell(picture_list[i][j], image, self.imgage_back, i, j)
+                cell = Cell(picture_list[i][j], image, self.image_back, i, j)
                 cells.append(cell)
 
         return cells
@@ -98,6 +104,13 @@ class EventHandling:
     """
     Класс, отвечает за обработку событий в игре
     """
+    def __init__(self):
+        pass
+
+    def cursor_position(self, x, y):
+        # определяет на какой клетке сделан клик
+        i_cell = ((x - 5) // CELL_SIZE) * FIELD_SIZE + (y - 5) // CELL_SIZE
+        return i_cell
 
 
 class Drawing:
@@ -140,6 +153,7 @@ class GameWindow:
         # Игроки
         player1 = Player("Петя", RED)
         self.game_manager = GameRound(player1)
+        self.event = EventHandling()
 
     # цикл игры
     def main_loop(self):
@@ -152,14 +166,12 @@ class GameWindow:
                 if event.type == pygame.MOUSEBUTTONUP:  # нажатие ЛКМ
                     if event.button == 1:
                         x_mouse, y_mouse = pygame.mouse.get_pos()
+                        i_cell = self.event.cursor_position(x_mouse, y_mouse)
+                        self.game_manager.cells[i_cell].click_cell()
                         
-
             # Прорисовка
             for cell in self.game_manager.cells:
-                if cell.name != 'sea':
-                    self._screen.blit(cell.image_back, (cell.x, cell.y))
-                else:
-                    self._screen.blit(cell.image, (cell.x, cell.y))
+                self._screen.blit(cell.image, (cell.x, cell.y))
 
             pygame.display.flip()
             clock.tick(FPS)
