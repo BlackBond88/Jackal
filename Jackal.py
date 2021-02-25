@@ -45,10 +45,12 @@ class Pirate:
     """
     Класс пиратов, содержит информацию о каждом пирте
     """
-    def __init__(self, number, player, image):
+    def __init__(self, number, player, image_pirate, image_select):
         self.number = number
         self.player = player
-        self.image = image
+        self.image_pirate = image_pirate
+        self.image_select = image_select
+        self.image = self.image_pirate
 
         if self.player.color == RED:
             if self.number != 2:
@@ -57,6 +59,19 @@ class Pirate:
             else:
                 self.x = FIELD_SIZE // 2 * CELL_SIZE + 32 + 9
                 self.y = 32 + 8
+
+    def pirate_select(self, x, y):
+        # проверяет попадает ли клик на пирата
+        if self.x < x < self.x + 25 and self.y < y < self.y + 25:
+            return True
+        return False
+
+    def select(self, select):
+        # если выбран пират - окрашивает его в красный
+        if select:
+            self.image = self.image_select
+        else:
+            self.image = self.image_pirate
 
 
 class Coin:
@@ -78,6 +93,8 @@ class GameField:
     """
     def __init__(self):
         self.image_back = pygame.image.load('Image/0.png')
+        self.pirates = []
+        self.cells = []
 
     def cells_create(self):
         # считывает название картинок
@@ -101,26 +118,28 @@ class GameField:
                     picture_list[i][j] = 'sea'
 
         # создаем экземпляр каждой клетки
-        cells = []
         for i in range(n):
             for j in range(n):
                 image_name = 'Image/' + str(picture_list[i][j]) + '.png'
                 image = pygame.image.load(image_name)
                 cell = Cell(picture_list[i][j], image, self.image_back, i, j)
-                cells.append(cell)
+                self.cells.append(cell)
 
-        return cells
+        return self.cells
 
     def pirate_create(self, player):
-        image_name = 'Image/pirate.png'
-        image = pygame.image.load(image_name)
+        image = pygame.image.load('Image/pirate.png')
+        image_select = pygame.image.load('Image/pirate_select.png')
         # создаем экземпляр каждого пирата
-        pirates = []
         for i in range(3):
-            pirate = Pirate(i, player, image)
-            pirates.append(pirate)
+            pirate = Pirate(i, player, image, image_select)
+            self.pirates.append(pirate)
 
-        return pirates
+        return self.pirates
+
+    def available_cells(self):
+        # определяет какие клетки доступны для клика
+        pass
 
 
 class EventHandling:
@@ -128,21 +147,19 @@ class EventHandling:
     Класс, отвечает за обработку событий в игре
     """
     def __init__(self):
-        pass
+        self.i_cell = 0
 
     def cursor_position(self, x, y):
         # определяет на какой клетке сделан клик
-        i_cell = ((x - 5) // CELL_SIZE) * FIELD_SIZE + (y - 5) // CELL_SIZE
-        return i_cell
+        self.i_cell = ((x - 5) // CELL_SIZE) * FIELD_SIZE + (y - 5) // CELL_SIZE
+        return self.i_cell
 
 
 class Drawing:
     """
     Класс прорисовки, отвечает за графику в игре
     """
-    def __init__(self, objects, screen):
-        self.objects = objects
-        self.screen = screen
+    pass
 
 
 class GameRound:
@@ -189,9 +206,15 @@ class GameWindow:
                     finished = True
                 if event.type == pygame.MOUSEBUTTONUP:  # нажатие ЛКМ
                     if event.button == 1:
+                        # определяет на какую клетку был клик
                         x_mouse, y_mouse = pygame.mouse.get_pos()
                         i_cell = self.event.cursor_position(x_mouse, y_mouse)
+                        # переворачивает клетку
                         self.game_manager.cells[i_cell].click_cell()
+                        # определяет нажат ли пират
+                        for i in range(3):
+                            select = self.game_manager.pirates[i].pirate_select(x_mouse, y_mouse)
+                            self.game_manager.pirates[i].select(select)
 
             # Прорисовка
             for cell in self.game_manager.cells:
