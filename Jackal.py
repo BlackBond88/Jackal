@@ -53,24 +53,23 @@ class Pirate:
         self.image_select = image_select
         self.image = self.image_pirate
         self.selected = False
+        if self.number == 0:
+            self.x_local = 4
+            self.y_local = 3
+        if self.number == 1:
+            self.x_local = 32 + 4
+            self.y_local = 3
+        if self.number == 2:
+            self.x_local = 32 + 4
+            self.y_local = 32 + 3
 
         if self.player.color == RED:
-            if self.number != 2:
-                self.x = FIELD_SIZE // 2 * CELL_SIZE + 32 * self.number + 9
-                self.y = 8
-            else:
-                self.x = FIELD_SIZE // 2 * CELL_SIZE + 32 + 9
-                self.y = 32 + 8
+            self.x = FIELD_SIZE // 2 * CELL_SIZE + self.x_local + 5
+            self.y = self.y_local + 5
 
     def pirate_select(self, x, y):
         # проверяет попадает ли клик на пирата
         if self.x < x < self.x + 25 and self.y < y < self.y + 25:
-            return True
-        return False
-
-    def select(self, select):
-        # если выбран пират - окрашивает его в красный
-        if select:
             self.image = self.image_select
             self.selected = True
         else:
@@ -141,13 +140,24 @@ class GameField:
 
         return self.pirates
 
+    def pirate_move(self, i, i_cell,):
+        # двигает пирата
+        if self.pirates[i].selected:
+            self.pirates[i].x = self.cells[i_cell].x + self.pirates[i].x_local
+            self.pirates[i].y = self.cells[i_cell].y + self.pirates[i].y_local
+
     def available_cells(self, i_cell):
         for cell in self.cells:
             cell.active = False
         # определяет какие клетки доступны для клика
+        x_cell = i_cell // FIELD_SIZE
+        y_cell = i_cell % FIELD_SIZE
         for pirate in self.pirates:
             if pirate.selected:
-                self.cells[i_cell + 13].active = True
+                if x_cell == 0:
+                    self.cells[i_cell + 13].active = True
+                    self.cells[i_cell + 1].active = True
+                    self.cells[i_cell - 1].active = True
 
 
 class EventHandling:
@@ -174,7 +184,7 @@ class Drawing:
     def draw_all(self):
         for cell in self.game.cells:
             self.screen.blit(cell.image, (cell.x, cell.y))
-            if cell.active == True:
+            if cell.active:
                 pygame.draw.rect(self.screen, GREEN, (cell.x - 2, cell.y - 2, 68, 68), 2)
 
         for pirate in self.game.pirates:
@@ -233,10 +243,14 @@ class GameWindow:
                         i_cell = self.event.cursor_position(x_mouse, y_mouse)
                         # переворачивает клетку
                         self.game_manager.cells[i_cell].click_cell()
+
                         # определяет нажат ли пират
                         for i in range(3):
-                            select = self.game_manager.pirates[i].pirate_select(x_mouse, y_mouse)
-                            self.game_manager.pirates[i].select(select)
+
+                            self.game_manager.pirates[i].pirate_select(x_mouse, y_mouse)
+
+                            # двигает пирата
+                            self.game_manager.field.pirate_move(i, i_cell)
 
                         # Проверка на какие клетки можно нажимать
                         self.game_manager.field.available_cells(i_cell)
