@@ -32,6 +32,7 @@ class Cell:
         self.j = j
         self.x = CELL_SIZE * i + 5     # координата клетки
         self.y = CELL_SIZE * j + 5
+        self.active = False
 
         self.image = self.image_cell
         if self.name != 'sea':
@@ -51,6 +52,7 @@ class Pirate:
         self.image_pirate = image_pirate
         self.image_select = image_select
         self.image = self.image_pirate
+        self.selected = False
 
         if self.player.color == RED:
             if self.number != 2:
@@ -70,8 +72,10 @@ class Pirate:
         # если выбран пират - окрашивает его в красный
         if select:
             self.image = self.image_select
+            self.selected = True
         else:
             self.image = self.image_pirate
+            self.selected = False
 
 
 class Coin:
@@ -118,8 +122,8 @@ class GameField:
                     picture_list[i][j] = 'sea'
 
         # создаем экземпляр каждой клетки
-        for i in range(n):
-            for j in range(n):
+        for j in range(n):  # наоборот, чтобы массив записывался сверху вних
+            for i in range(n):
                 image_name = 'Image/' + str(picture_list[i][j]) + '.png'
                 image = pygame.image.load(image_name)
                 cell = Cell(picture_list[i][j], image, self.image_back, i, j)
@@ -137,9 +141,13 @@ class GameField:
 
         return self.pirates
 
-    def available_cells(self):
+    def available_cells(self, i_cell):
+        for cell in self.cells:
+            cell.active = False
         # определяет какие клетки доступны для клика
-        pass
+        for pirate in self.pirates:
+            if pirate.selected:
+                self.cells[i_cell + 13].active = True
 
 
 class EventHandling:
@@ -151,7 +159,7 @@ class EventHandling:
 
     def cursor_position(self, x, y):
         # определяет на какой клетке сделан клик
-        self.i_cell = ((x - 5) // CELL_SIZE) * FIELD_SIZE + (y - 5) // CELL_SIZE
+        self.i_cell = ((y - 5) // CELL_SIZE) * FIELD_SIZE + (x - 5) // CELL_SIZE
         return self.i_cell
 
 
@@ -159,7 +167,18 @@ class Drawing:
     """
     Класс прорисовки, отвечает за графику в игре
     """
-    pass
+    def __init__(self, screen, game):
+        self.screen = screen
+        self.game = game
+
+    def draw_all(self):
+        for cell in self.game.cells:
+            self.screen.blit(cell.image, (cell.x, cell.y))
+            if cell.active == True:
+                pygame.draw.rect(self.screen, GREEN, (cell.x - 2, cell.y - 2, 68, 68), 2)
+
+        for pirate in self.game.pirates:
+            self.screen.blit(pirate.image, (pirate.x, pirate.y))
 
 
 class GameRound:
@@ -188,13 +207,16 @@ class GameWindow:
         self._width = SCREEN_WIDTH
         self._height = SCREEN_HEIGTH
         self._title = GAME_NAME
-        self._screen = pygame.display.set_mode((self._width, self._height))
+        self.screen = pygame.display.set_mode((self._width, self._height))
         pygame.display.set_caption(self._title)
 
         # Игроки
         player1 = Player("Петя", RED)
         self.game_manager = GameRound(player1)
         self.event = EventHandling()
+
+        # Прорисовка
+        self.draw = Drawing(self.screen, self.game_manager)
 
     # цикл игры
     def main_loop(self):
@@ -216,14 +238,15 @@ class GameWindow:
                             select = self.game_manager.pirates[i].pirate_select(x_mouse, y_mouse)
                             self.game_manager.pirates[i].select(select)
 
+                        # Проверка на какие клетки можно нажимать
+                        self.game_manager.field.available_cells(i_cell)
+
             # Прорисовка
-            for cell in self.game_manager.cells:
-                self._screen.blit(cell.image, (cell.x, cell.y))
-            for pirate in self.game_manager.pirates:
-                self._screen.blit(pirate.image, (pirate.x, pirate.y))
+            self.draw.draw_all()
 
             pygame.display.flip()
             clock.tick(FPS)
+            self.screen.fill(BLACK)
 
 
 def main():
