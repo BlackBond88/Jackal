@@ -67,15 +67,6 @@ class Pirate:
             self.x = FIELD_SIZE // 2 * CELL_SIZE + self.x_local + 5
             self.y = self.y_local + 5
 
-    def pirate_select(self, x, y):
-        # проверяет попадает ли клик на пирата
-        if self.x < x < self.x + 25 and self.y < y < self.y + 25:
-            self.image = self.image_select
-            self.selected = True
-        else:
-            self.image = self.image_pirate
-            self.selected = False
-
 
 class Coin:
     """
@@ -140,11 +131,26 @@ class GameField:
 
         return self.pirates
 
-    def pirate_move(self, i, i_cell,):
+    def pirate_select(self, x, y):
+        # проверяет попадает ли клик на пирата
+        select = False
+        for pirate in self.pirates:
+            if pirate.x < x < pirate.x + 25 and pirate.y < y < pirate.y + 25:
+                pirate.image = pirate.image_select
+                pirate.selected = True
+                select = True
+
+        return select
+
+    def pirate_move(self, i_cell):
+
         # двигает пирата
-        if self.pirates[i].selected:
-            self.pirates[i].x = self.cells[i_cell].x + self.pirates[i].x_local
-            self.pirates[i].y = self.cells[i_cell].y + self.pirates[i].y_local
+        for pirate in self.pirates:
+            if pirate.selected:
+                pirate.x = self.cells[i_cell].x + pirate.x_local
+                pirate.y = self.cells[i_cell].y + pirate.y_local
+                #pirate.image = pirate.image_pirate
+                #pirate.selected = False
 
     def available_cells(self, i_cell):
         for cell in self.cells:
@@ -245,12 +251,11 @@ class GameWindow:
                         self.game_manager.cells[i_cell].click_cell()
 
                         # определяет нажат ли пират
-                        for i in range(3):
+                        select = self.game_manager.field.pirate_select(x_mouse, y_mouse)
 
-                            self.game_manager.pirates[i].pirate_select(x_mouse, y_mouse)
-
+                        if not select:
                             # двигает пирата
-                            self.game_manager.field.pirate_move(i, i_cell)
+                            self.game_manager.field.pirate_move(i_cell)
 
                         # Проверка на какие клетки можно нажимать
                         self.game_manager.field.available_cells(i_cell)
