@@ -139,18 +139,24 @@ class GameField:
                 pirate.image = pirate.image_select
                 pirate.selected = True
                 select = True
+            else:
+                pirate.image = pirate.image_pirate
+                pirate.temp = pirate.selected
+                pirate.selected = False
+        if not select:
+            for pirate in self.pirates:
+                pirate.selected = pirate.temp
 
         return select
 
-    def pirate_move(self, i_cell):
+    def pirate_move(self, i_cell, select):
 
         # двигает пирата
-        for pirate in self.pirates:
-            if pirate.selected:
-                pirate.x = self.cells[i_cell].x + pirate.x_local
-                pirate.y = self.cells[i_cell].y + pirate.y_local
-                #pirate.image = pirate.image_pirate
-                #pirate.selected = False
+        if not select:
+            for pirate in self.pirates:
+                if pirate.selected:
+                    pirate.x = self.cells[i_cell].x + pirate.x_local
+                    pirate.y = self.cells[i_cell].y + pirate.y_local
 
     def available_cells(self, i_cell):
         for cell in self.cells:
@@ -253,9 +259,8 @@ class GameWindow:
                         # определяет нажат ли пират
                         select = self.game_manager.field.pirate_select(x_mouse, y_mouse)
 
-                        if not select:
-                            # двигает пирата
-                            self.game_manager.field.pirate_move(i_cell)
+                        # двигает пирата
+                        self.game_manager.field.pirate_move(i_cell, select)
 
                         # Проверка на какие клетки можно нажимать
                         self.game_manager.field.available_cells(i_cell)
