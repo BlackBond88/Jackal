@@ -53,6 +53,8 @@ class Pirate:
         self.image_select = image_select
         self.image = self.image_pirate
         self.selected = False
+        self.on_ship = True
+
         if self.number == 0:
             self.x_local = 4
             self.y_local = 3
@@ -78,6 +80,12 @@ class Ship:
     """
     Класс кораблей, содержит информацию о кораблях
     """
+    def __init__(self, player, image):
+        self.player = player
+        self.image = image
+        self.x = FIELD_SIZE // 2 * CELL_SIZE + 5
+        self.y = 5
+        self.cell = 6
 
 
 class GameField:
@@ -89,6 +97,7 @@ class GameField:
         self.image_back = pygame.image.load('Image/0.png')
         self.pirates = []
         self.cells = []
+        self.ship = ''
 
     def cells_create(self):
         # считывает название картинок
@@ -131,6 +140,13 @@ class GameField:
 
         return self.pirates
 
+    def ship_create(self, player):
+        image = pygame.image.load('Image/ship.png')
+        # создаем экземпляр коробля для каждого игрока
+        self.ship = Ship(player, image)
+
+        return self.ship
+
     def pirate_select(self, x, y):
         # проверяет попадает ли клик на пирата
         select = False
@@ -150,13 +166,21 @@ class GameField:
         return select
 
     def pirate_move(self, i_cell, select):
-
         # двигает пирата
         if not select:
             for pirate in self.pirates:
                 if pirate.selected:
                     pirate.x = self.cells[i_cell].x + pirate.x_local
                     pirate.y = self.cells[i_cell].y + pirate.y_local
+
+    def check_on_ship(self, i_cell):
+        # проверяет находится ли пират на корабле
+        for pirate in self.pirates:
+            if pirate.selected:
+                if i_cell != self.ship.cell:
+                    pirate.on_ship = False
+                else:
+                    pirate.on_ship = True
 
     def available_cells(self, i_cell):
         for cell in self.cells:
@@ -166,11 +190,26 @@ class GameField:
         y_cell = i_cell % FIELD_SIZE
         for pirate in self.pirates:
             if pirate.selected:
-                if x_cell == 0:
+                if not pirate.on_ship:
+                    self.cells[i_cell + 12].active = True
                     self.cells[i_cell + 13].active = True
+                    self.cells[i_cell + 14].active = True
                     self.cells[i_cell + 1].active = True
                     self.cells[i_cell - 1].active = True
+                    self.cells[i_cell - 12].active = True
+                    self.cells[i_cell - 13].active = True
+                    self.cells[i_cell - 14].active = True
 
+        for cell in self.cells:
+            if cell.name == 'sea':
+                cell.active = False
+
+        for pirate in self.pirates:
+            if pirate.selected:
+                if pirate.on_ship:
+                    self.cells[i_cell + 1].active = True
+                    self.cells[i_cell - 1].active = True
+                    self.cells[i_cell + 13].active = True
 
 class EventHandling:
     """
@@ -199,6 +238,8 @@ class Drawing:
             if cell.active:
                 pygame.draw.rect(self.screen, GREEN, (cell.x - 2, cell.y - 2, 68, 68), 2)
 
+        self.screen.blit(self.game.ships.image, (self.game.ships.x, self.game.ships.y))
+
         for pirate in self.game.pirates:
             self.screen.blit(pirate.image, (pirate.x, pirate.y))
 
@@ -215,6 +256,7 @@ class GameRound:
         self.field = GameField()
         self.cells = self.field.cells_create()
         self.pirates = self.field.pirate_create(self.players)
+        self.ships = self.field.ship_create(self.players)
 
 
 class GameWindow:
@@ -258,6 +300,9 @@ class GameWindow:
 
                         # определяет нажат ли пират
                         select = self.game_manager.field.pirate_select(x_mouse, y_mouse)
+
+                        # определяет находится ли пират на корабле
+                        self.game_manager.field.check_on_ship(i_cell)
 
                         # двигает пирата
                         self.game_manager.field.pirate_move(i_cell, select)

@@ -2,7 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="252c8f25-ba5f-4a05-9c6c-dfff418a2d4d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Image/e.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image/kisspng-brigantine-boat-full-rigged-ship-galleon-ships-5aeb85da371172.7684027215253846662256.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image/purepng.com-big-shipwatercrafttravelswaterwayscarryingyachtshipcontainership-yacht-1701528475339fv4tc.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image/ship2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image/ship3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image/ship4.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Image/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Image/cross.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Image/ship.png" beforeDir="false" afterPath="$PROJECT_DIR$/Image/ship.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Image/zero.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Jackal.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jackal.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
