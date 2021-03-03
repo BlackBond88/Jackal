@@ -95,6 +95,7 @@ class GameField:
     """
     def __init__(self):
         self.image_back = pygame.image.load('Image/0.png')
+        self.select = False
         self.pirates = []
         self.cells = []
         self.ship = ''
@@ -149,25 +150,23 @@ class GameField:
 
     def pirate_select(self, x, y):
         # проверяет попадает ли клик на пирата
-        select = False
+        self.select = False
         for pirate in self.pirates:
             if pirate.x < x < pirate.x + 25 and pirate.y < y < pirate.y + 25:
                 pirate.image = pirate.image_select
                 pirate.selected = True
-                select = True
+                self.select = True
             else:
                 pirate.image = pirate.image_pirate
                 pirate.temp = pirate.selected
                 pirate.selected = False
-        if not select:
+        if not self.select:
             for pirate in self.pirates:
                 pirate.selected = pirate.temp
 
-        return select
-
-    def pirate_move(self, i_cell, select):
+    def pirate_move(self, i_cell):
         # двигает пирата
-        if not select:
+        if not self.select:
             for pirate in self.pirates:
                 if pirate.selected:
                     pirate.x = self.cells[i_cell].x + pirate.x_local
@@ -182,12 +181,14 @@ class GameField:
                 else:
                     pirate.on_ship = True
 
+    def ship_move(self, i_cell):
+        # двигает корабль
+        pass
+
     def available_cells(self, i_cell):
         for cell in self.cells:
             cell.active = False
         # определяет какие клетки доступны для клика
-        x_cell = i_cell // FIELD_SIZE
-        y_cell = i_cell % FIELD_SIZE
         for pirate in self.pirates:
             if pirate.selected:
                 if not pirate.on_ship:
@@ -210,6 +211,11 @@ class GameField:
                     self.cells[i_cell + 1].active = True
                     self.cells[i_cell - 1].active = True
                     self.cells[i_cell + 13].active = True
+
+        if not self.select:
+            for cell in self.cells:
+                cell.active = False
+
 
 class EventHandling:
     """
@@ -295,17 +301,19 @@ class GameWindow:
                         # определяет на какую клетку был клик
                         x_mouse, y_mouse = pygame.mouse.get_pos()
                         i_cell = self.event.cursor_position(x_mouse, y_mouse)
-                        # переворачивает клетку
-                        self.game_manager.cells[i_cell].click_cell()
 
                         # определяет нажат ли пират
-                        select = self.game_manager.field.pirate_select(x_mouse, y_mouse)
+                        self.game_manager.field.pirate_select(x_mouse, y_mouse)
 
                         # определяет находится ли пират на корабле
                         self.game_manager.field.check_on_ship(i_cell)
 
-                        # двигает пирата
-                        self.game_manager.field.pirate_move(i_cell, select)
+                        if self.game_manager.cells[i_cell].active:
+                            # переворачивает клетку
+                            self.game_manager.cells[i_cell].click_cell()
+
+                            # двигает пирата
+                            self.game_manager.field.pirate_move(i_cell)
 
                         # Проверка на какие клетки можно нажимать
                         self.game_manager.field.available_cells(i_cell)
@@ -321,7 +329,6 @@ class GameWindow:
 def main():
     window = GameWindow()
     window.main_loop()
-    print('Game over!')
 
 
 if __name__ == '__main__':
